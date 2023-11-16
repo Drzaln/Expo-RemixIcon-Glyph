@@ -33,10 +33,15 @@ jobs:
       - name: Replace existing remixicon.expo.json
         run: mv remixicon.expo.json remixicon.expo.backup.json
 
-      - name: Commit and push changes
+      - name: Commit File
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
           git add .
           git commit -m "Update Expo-compatible glyph data"
-          git push https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          branch: ${{ github.ref }}
