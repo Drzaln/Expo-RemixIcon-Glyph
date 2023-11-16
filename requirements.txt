@@ -1,0 +1,2 @@
+# requirements.txt
+jsonpickle==2.0.0
