@@ -13,6 +13,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Delete existing remixicon*.expo.json files
+        run: |
+          rm -f remixicon*.expo.json
+
       - name: Download RemixIcon Glyph
         run: |
           curl -LJO https://raw.githubusercontent.com/Remix-Design/RemixIcon/master/fonts/remixicon.glyph.json
@@ -30,11 +34,18 @@ jobs:
       - name: Run conversion script
         run: python convert_glyph.py
 
+      - name: Get RemixIcon latest release version
+        id: get_version
+        run: echo "::set-output name=version::$(curl -s https://api.github.com/repos/Remix-Design/RemixIcon/releases/latest | jq -r .tag_name)"
+
+      - name: Rename the file with version
+        run: mv remixicon.expo.json "remixicon${{ steps.get_version.outputs.version }}.expo.json"
+
       - name: Commit File
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add remixicon.expo.json
+          git add remixicon*.expo.json
           git commit -a -m "Update Expo-compatible glyph data"
 
       - name: Push changes
