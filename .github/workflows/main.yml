@@ -31,7 +31,7 @@ jobs:
         run: python convert_glyph.py
 
       - name: Replace existing remixicon.expo.json
-        run: mv remixicon.expo.json ./remixicon.expo.json
+        run: mv remixicon.expo.json remixicon.expo.backup.json
 
       - name: Commit and push changes
         run: |
