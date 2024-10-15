@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Delete existing remixicon*.expo.json files
         run: |
@@ -22,7 +22,7 @@ jobs:
           curl -LJO https://raw.githubusercontent.com/Remix-Design/RemixIcon/master/fonts/remixicon.glyph.json
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
 
@@ -36,10 +36,12 @@ jobs:
 
       - name: Get RemixIcon latest release version
         id: get_version
-        run: echo "::set-output name=version::$(curl -s https://api.github.com/repos/Remix-Design/RemixIcon/releases/latest | jq -r .tag_name)"
+        run: |
+          version=$(curl -s https://api.github.com/repos/Remix-Design/RemixIcon/releases/latest | jq -r .tag_name)
+          echo "version=$version" >> $GITHUB_ENV
 
       - name: Rename the file with version
-        run: mv remixicon.expo.json "remixicon${{ steps.get_version.outputs.version }}.expo.json"
+        run: mv remixicon.expo.json "remixicon${{ env.version }}.expo.json"
 
       - name: Commit File
         run: |
@@ -52,4 +54,4 @@ jobs:
         uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          branch: ${{ github.ref_name }}
